@@ -56,6 +56,7 @@
 \newcommand{\chr}{\mathrm{char}}
 \renewcommand{\d}{\mathrm{d}}
 \renewcommand{\P}{\mathbb{P}}
+\newcommand{\ldsto}{\underset{\text{\tiny leads to}}{\leadsto}}
 
 \newcommand{\fatrule}[1]{\vspace{.3cm}\hrule {\hfill \sf #1}}
 
@@ -491,7 +492,7 @@ Creative Commons By-Attribution Share-Alike\, \makebox(30,5){\includegraphics[he
 
 	\begin{theorem}
 		Let $(X_i)$ be a Markov chain, let $N(x)$ be the number of times state
-		$x$ is visited, and let $G(y,x)=\E(N(x)\mid X_1=y)$. Then,
+		$x$ is visited, and let $G(y,x)=\E(N(x)\mid X_0=y)$. Then,
 		\begin{enumerate}[label=(i)]
 			\item if $x$ is recurrent, $\P(N(x) = \infty\mid X_1= x)=1$ and $G(x,x)=\infty$, and
 			\item if $x$ is transient, $\P(N(x) < \infty\mid X_1=y)=1$ and
@@ -504,6 +505,9 @@ Creative Commons By-Attribution Share-Alike\, \makebox(30,5){\includegraphics[he
 	often and transient states are visited finitely often.  Also, we can precisely
 	compute the expectation of the number of times a transient state is visited
 	in terms of $\rho$.
+
+	\fatrule{Day 7}
+
 
 	\begin{proof}
 		(i).  Suppose $x$ is a recurrent state.  Let $T^{(n)}_{\{x\}}= \min\{i > n:X_i=x\}$
@@ -550,5 +554,90 @@ Creative Commons By-Attribution Share-Alike\, \makebox(30,5){\includegraphics[he
 
 	\end{proof}
 
+	\fatrule{Day 8}
+
+	In light of the previous theorem, we can think of recurrent and transient states as synonymous with
+	being visited a finite number of times.
+
+	To ease notation, since we will often 
+	talk about $\P(E\mid X_0=x)$ for events $E$ and states $x$, we will use the shorthand notation $\P_x(E)$.
+
+	\begin{definition}[Recurrent \& Transient Chains]
+		A Markov chain is called a \emph{recurrent chain} if every state is recurrent and
+		it is called a \emph{transient chain} if every state is transient.
+	\end{definition}
+
+	Note that, unlike states, there can be Markov chains that are neither recurrent nor transient.
+
+	\begin{definition}[Closed]
+		Let $(X_i)$ be a Markov chain with state space $\mathcal S$.  A subset $\mathcal A\subseteq \mathcal S$ is
+		called \emph{closed} if $P(a,b)=0$ whenever $a\in \mathcal C$ and $b\in \mathcal A^C$, where $\mathcal A^C$ is
+		the complement of $\mathcal C$.
+	\end{definition}
+
+	In other words, a set $\mathcal A$ is closed if $\mathcal A$ as a whole acts like
+	an absorbing state.
+
+	\begin{lemma}
+		Let $\mathcal A$ be a closed set for a Markov chain and suppose $a\in \mathcal A$ and $b\notin \mathcal A$.
+		Then $\rho_{ab} = 0$.
+	\end{lemma}
+	\begin{proof}
+		Suppose $\rho_{ab}>0$.  Then there exists some sequence of states $a=x_0\to x_1\to\cdots\to x_{n-1}\to x_{n}=b$
+		such that $\P(x_0\to x_1\to\cdots\to x_{n-1}\to x_{n})>0$.  For each $i$, $x_i\in \mathcal A$ or $x_i\notin\mathcal A$.
+		Let $k$ be the smallest index such that $x_k\notin \mathcal A$.  Since $x_0\in\mathcal A$, $k\geq 1$.
+
+		Now, since $\mathcal A$ is closed and $x_{k-1}\in \mathcal A$ and $x_k\notin\mathcal A$, we have that $P(x_{k-1},x_k)=0$.
+		But this means, $\P(x_0\to x_1\to\cdots\to x_{n-1}\to x_{n}) = \prod_{i\geq 1}^n \P(x_{i-1}\to x_i) = 0$, which
+		is a contradiction.
+	\end{proof}
+
+	\begin{definition}[Leads To]
+		For a Markov chain, we say a state $a$ \emph{leads to} a state $b$ if $\rho_{ab}>0$, and we
+		notate it $a\ldsto b$.
+	\end{definition}
+	\begin{definition}[Irreducible]
+		Let $(X_i)$ be a Markov chain with state space $\mathcal S$.  A subset $\mathcal A\subseteq\mathcal S$
+		is called \emph{irreducible} if $\rho_{ab}>0$ for any $a,b\in\mathcal A$.
+	\end{definition}
+
+	Eventually we will learn how to decompose a Markov chain into closed and irreducible components.
+
+	\begin{theorem}
+		Let $(X_i)$ be a Markov chain with state space $\mathcal S$.
+		For $x,y\in \mathcal S$, suppose that $x$ is recurrent and $x\ldsto y$.  Then $y$
+		is recurrent and $\rho_{xy}=\rho_{yx}=1$.
+	\end{theorem}
+	\begin{proof}
+		We will first prove the result for the one-step process.
+		Fix $x,y\in\mathcal S$ such that $x$ is recurrent and $\P(x\to y)>0$.
+		Since $x$ is recurrent, $\P_x(T_x=\infty) = 0$, so
+		\[
+			0=\P_x(T_x=\infty) \geq \P(x\to y)(1-\rho_{yx}).
+		\]
+		But, we assumed $\P(x\to y)>0$, so we conclude $\rho_{yx}=1$ (because $1-\rho_{yx}=0$).
+
+		Let $A_x=\{i:X_i=x\mid X_0=x\}$.  For every $i\in A$, there is a $\P(x\to y)$ probability
+		of transitioning from $x$ to $y$.  Thus,
+		\[
+			\P_x(N(y)=0) \leq \P(X_{i+1}\neq y\text{ for every }i\in A_x)=
+			\prod_{i\in A_x} (1-\P(x\to y))=0
+		\]
+		since $|A_x|=\infty$.  We conclude that $\P_x(N(y)\geq 1)=1$ and so $\rho_{xy}=1$.
+
+		Since 
+		\[
+			\rho_{yy} \geq \rho_{yx}\rho_{xy}=1,
+		\]
+		$y$ is recurrent.
+		
+		We have proven that if $y$ is one step from $x$ and $\rho_{xy}>0$ and $x$ is recurrent, 
+		then $y$ is recurrent.
+
+		Now, suppose $x\ldsto y$ and $x$ is recurrent.  This means there exists some chain $x=s_0\to s_1\to\cdots \to s_{n-1}\to s_n=y$
+		such that $\P(s_0\to\ldots\to s_n)>0$.  Suppose one of the $s_i$ is not recurrent, and let $k$ be the minimum
+		index of such an $s_i$.  Since $s_0=x$ is recurrent, $k\geq 1$.  We now have $s_{k-1}$ is recurrent and
+		$\P(s_{k-1}\to s_k) > 0$, so $s_k$ must be recurrent, a contradition which completes the proof.
+	\end{proof}
 
 \end{document}
