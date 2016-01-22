@@ -617,13 +617,35 @@ Creative Commons By-Attribution Share-Alike\, \makebox(30,5){\includegraphics[he
 		\]
 		But, we assumed $\P(x\to y)>0$, so we conclude $\rho_{yx}=1$ (because $1-\rho_{yx}=0$).
 
-		Let $A_x=\{i:X_i=x\mid X_0=x\}$.  For every $i\in A$, there is a $\P(x\to y)$ probability
-		of transitioning from $x$ to $y$.  Thus,
+		Let $N^j(a) = \#\{X_i=a: i \leq j\}$.
+		Now, since $x$ is recurrent, for any $\varepsilon>0$ and any $k$, we may find an $n$ such
+		that $\P_x(N^n(x)\geq k) > 1-\varepsilon$.  Let $C_w^n(a)=\{\text{chains of length $n$ with $w$ 
+		occurrences of $a$}\}$.
+		Now, we have
 		\[
-			\P_x(N(y)=0) \leq \P(X_{i+1}\neq y\text{ for every }i\in A_x)=
-			\prod_{i\in A_x} (1-\P(x\to y))=0
+			\P_x(N^n(x)\geq k) = \sum_{w=k}^n \sum_{C\in C_w^n(x)} \P_x(C) > 1-\varepsilon,
 		\]
-		since $|A_x|=\infty$.  We conclude that $\P_x(N(y)\geq 1)=1$ and so $\rho_{xy}=1$.
+		and so in particular
+		\[
+			\sum_{w=0}^k \sum_{C\in C_w^n(x)} \P_x(C) \leq \varepsilon.
+		\]
+		
+		Consider a chain $C\in C_w^n(x)\cap C_0^n(y)$.  Since the chain is Markov, we know
+		$\P(\cdots\to x\to s\to\ldots) = \P(\cdots\to x)\P(x\to s)\P(s\to\ldots)$.  
+		Since there are no occurences of $y$, $\P(x\to s) = 1-P(x,y)$. Since there are $w$ occurences
+		of $x$ in $C$, $\P_x(C) \leq (1-P(x,y))^k$.
+
+		We are now ready to compute
+		\[
+			\P_x(N(y)=0) \leq \P_x(N^n(y)=0) = \sum_{w=0}^n \ \sum_{C\in C_w^n(x)\cap C_0^n(y)} \P_x(C)
+		\]\[
+			=\sum_{w=k+1}^n \sum_{C\in C_w^n(x)\cap C_0^n(y)} \P_x(C)
+			+\sum_{w=0}^k \ \sum_{C\in C_w^n(x)\cap C_0^n(y)} \P_x(C)
+		\]\[
+			\leq (1-P(x,y))^k + \varepsilon.
+		\]
+		Since $P(x,y)>0$ and this holds for all $\varepsilon$ and $k$, we conclude that, we conclude that 
+		$\P_x(N(y)\geq 1)=1$ and so $\rho_{xy}=1$.
 
 		Since 
 		\[
