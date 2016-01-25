@@ -66,6 +66,7 @@
 %\definecolor{defcolor}{rgb}{.05,.4,.15}
 %\colorlet{defframecolor}{green!50!black}
 \declareoutlinedbox{lemma}{LEMMA}{LEM}{defframecolor}{defcolor}
+\declareoutlinedbox{corollary}{COROLLARY}{COR}{defframecolor}{defcolor}
 \newenvironment{proof}{\emph{Proof.}}{\hfill$\square$}
 %%%
 % Set up the margins to use a fairly large area of the page
@@ -629,10 +630,13 @@ Creative Commons By-Attribution Share-Alike\, \makebox(30,5){\includegraphics[he
 		\[
 			\sum_{w=0}^k \sum_{C\in C_w^n(x)} \P_x(C) \leq \varepsilon.
 		\]
+
+
+	\fatrule{Day 9}
 		
 		Consider a chain $C\in C_w^n(x)\cap C_0^n(y)$.  Since the chain is Markov, we know
 		$\P(\cdots\to x\to s\to\ldots) = \P(\cdots\to x)\P(x\to s)\P(s\to\ldots)$.  
-		Since there are no occurences of $y$, $\P(x\to s) = 1-P(x,y)$. Since there are $w$ occurences
+		Since there are no occurrences of $y$, $\P(x\to s) = 1-P(x,y)$. Since there are $w$ occurences
 		of $x$ in $C$, $\P_x(C) \leq (1-P(x,y))^k$.
 
 		We are now ready to compute
@@ -660,6 +664,115 @@ Creative Commons By-Attribution Share-Alike\, \makebox(30,5){\includegraphics[he
 		such that $\P(s_0\to\ldots\to s_n)>0$.  Suppose one of the $s_i$ is not recurrent, and let $k$ be the minimum
 		index of such an $s_i$.  Since $s_0=x$ is recurrent, $k\geq 1$.  We now have $s_{k-1}$ is recurrent and
 		$\P(s_{k-1}\to s_k) > 0$, so $s_k$ must be recurrent, a contradition which completes the proof.
+	\end{proof}
+
+	\begin{corollary}
+		Suppose $\mathcal S$ is the state space of a Markov chain and $\mathcal B\subseteq \mathcal S$ is 
+		a closed and irreducible set.  Then, if $\mathcal B$ contains a recurrent state, $\rho_{xy}=1$ for
+		all $x,y\in\mathcal B$.
+	\end{corollary}
+
+	\begin{theorem}
+		If $\mathcal B\subseteq\mathcal S$ is a finite, closed, and irreducible
+		subset of the state space $\mathcal S$ for a Markov chain, then every state
+		in $\mathcal B$ is recurrent.
+	\end{theorem}
+	\begin{proof}
+		Fix $x\in\mathcal B$.  By the pidgeon hole principle, there must be some
+		state $y\in\mathcal B$ so that $\E(N(y)\mid X_0=x)=\infty$.  By our first theorem,
+		this means that $y$ is recurrent.  Since $\mathcal B$ is irreducible,
+		$\rho_{yt}>0$ for any $t\in\mathcal B$, and so by our second theorem, $\rho_{yt}=1$.
+	\end{proof}
+
+	We've stated a lot of theorems.  Let's look at a simple example.  
+
+	Suppose the transition matrix for a Markov chain is
+	\[
+		\kbordermatrix{& 0&1&2&3&4&5\\
+		               0& 1 & 0 &0&0&0&0\\
+				1& 1/4&1/2&1/4&0&0&0\\
+				2&0&1/5&2/5&1/5&0&1/5\\
+				3&0&0&0&1/6&1/3&1/2\\
+				4&0&0&0&1/2&0&1/2\\
+				5&0&0&0&1/4&0&3/4}.
+	\]
+
+	Can we identify the closed, irreducible components?  Can we identify the recurrent states?
+
+	Well, the transition graph for this chain looks like
+	
+	\begin{center}
+	\usetikzlibrary{fit}
+	\begin{tikzpicture}[>=latex,scale=2.5,auto,semithick,node distance=3cm]
+	\tikzstyle{every state}=[fill=white,draw=black,thick,text=black,scale=1]
+
+	\tikzset{vertex/.style = {shape=circle,draw,minimum size=1.5em}}
+	\tikzset{edge/.style = {->}}
+	% vertices
+	\node[state] (a) at  (0,1) {$0$};
+	\node[state] (b) at  (1,1) {$1$};
+	\node[state] (c) at  (2,1) {$2$};
+	\node[state] (d) at  (0,0) {$3$};
+	\node[state] (e) at  (1,0) {$4$};
+	\node[state] (f) at  (2,0) {$5$};
+	%edges
+	\path (a) edge[->,loop left] (a);
+	\path (b) edge[->,loop left] (b);
+	\path (b) edge[->,bend left] (a);
+	\path (b) edge[->,bend left] (c);
+	\path (c) edge[->,bend left] (b);
+	\path (c) edge[->,loop right] (c);
+	\path (c) edge[->,bend right] (d);
+	\path (c) edge[->,bend left] (f);
+
+
+	\path (d) edge[->,loop left] (d);
+	\path (d) edge[->,bend left] (e);
+	\path (d) edge[->,bend left] (f);
+	\path (e) edge[->,bend left] (f);
+	\path (e) edge[->,bend left] (d);
+	\path (f) edge[->,bend left] (d);
+	\path (f) edge[->,loop right] (f);
+
+	\end{tikzpicture}
+	\end{center}
+
+	Subsets of the graph with only incoming edges are closed.  Subsets
+	of the graph where there is a path going through every element are 
+	irreducible.  We therefore see the closed, irreducible subsets of the
+	state space are $C_0=\{0\}$ and $C_1=\{3,4,5\}$.  Since these are
+	finite, they must consist only of recurrent points.  We can also
+	see that states $1$ and $2$ are not recurrent since there is a positive
+	probability of transitioning into $C_0$ or $C_1$.
+
+	\begin{theorem}
+		Let $\mathcal S_R\subseteq \mathcal S$ be the set of all recurrent
+		states for a Markov chain with state space $\mathcal S$.  Then
+		$\mathcal S_R = \bigcup C_i$ where $\{C_i\}$ are disjoint, closed,
+		and irreducible.
+	\end{theorem}
+
+	\begin{proof}
+		Suppose $C$ is a closed set of recurrent points. Then $\ldsto$ is an equivalence
+		relation on $C$.
+
+		It is clear that since for any two states $x,y$, either $\rho_{xy}>0$ or $\rho_{xy}=0$,
+		$\ldsto$ is a relation on the set of states.  We will now show it satisfies the properties
+		of an equivalence relation.
+
+		\begin{enumerate}
+			\item[(reflexive)] If $x\in C$, then $x\ldsto x$ because $x$ is recurrent.
+			\item[(symmetric)] If $x,y\in C$ and $x\ldsto y$, then $y\ldsto x$ by our second theorem.
+			\item[(transitive)] If $x,y,z\in C$ and $x\ldsto y$ and $y\ldsto z$, then
+				$\rho_{xz} \geq \rho_{xy}\rho_{yz} > 0$, so $x\ldsto z$.
+		\end{enumerate}
+
+		Now, notice that $\mathcal S_R$ is closed.  Suppose $y\notin \mathcal S_R$.  Then,
+		\[
+			1=\rho_{xx} \leq 1-\rho_{xy},
+		\]
+		and so $\rho_{xy}=0$ which is equivalent to $\mathcal S_R$ beging closed.  Now,
+		let $\{C_i\}$ be the partition coming from the equivalence relation $\ldsto$.
 	\end{proof}
 
 \end{document}
