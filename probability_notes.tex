@@ -775,4 +775,77 @@ Creative Commons By-Attribution Share-Alike\, \makebox(30,5){\includegraphics[he
 		let $\{C_i\}$ be the partition coming from the equivalence relation $\ldsto$.
 	\end{proof}
 
+	\begin{definition}
+		For a set of states $A$, let $\rho_{xA}=\P_x(T_A<\infty)$ be the probability of transitioning
+		from the state $x$ to any state in $A$ in finite time.
+	\end{definition}
+
+	If $A$ is a closed set of states, we can think of $\rho_{xA}$ as the probability that starting
+	at $x$, you will be absorbed by the set $A$.  In light of the previous
+	theorem, we now have a strategy for studying Markov chains.
+	\begin{enumerate}
+		\item[(i)] Find the closed, irreducible subsets of the state space $\{C_i\}$.
+		\item[(ii)] For a transient state $x$, compute $\rho_{xC_i}$.
+		\item[(iii)] Study irreducible Markov chains.
+	\end{enumerate}
+
+	For a moment, let's consider (ii).  Suppose $\{C_i\}$ is the collection of closed, irreducible subsets
+	of the state space.  Then, if $x\in C_i$,
+	\[
+		\rho_{xC_i} = 1\qquad\text{ and }\qquad \rho_{xC_j} = 0\text{ for $i\neq j$}.
+	\]
+	If $x$ is transient, things are a little harder.  But, we do know if $x$ transitions 
+	to $C_i$, it does so in one step or more than one step.  Thus,
+	\begin{equation}
+		\label{EqRhoC}
+		\rho_{xC_i} = \sum_{y\in C_i} P(x,y) + \sum_{y\notin C_i} P(x,y)\rho_{yC_i}
+		= \sum_{y\in C_i} P(x,y) + \sum_{y\in \mathcal S_T} P(x,y)\rho_{yC_i},
+	\end{equation}
+	where $\mathcal S_T$ is the set of all transient points.
+
+	If we squint at equation \eqref{EqRhoC}, we see that taking the collection of $\{\rho_{zC_i}\}$
+	as unknowns, equation \eqref{EqRhoC} gives us a system of linear equations for $\{\rho_{zC_i}\}$.
+	Thus, finding $\rho_{xC_i}$ should just be a little linear algebra (if the system actually has a solution).
+
+	Suppose now that there are only a finite number of transient states $\{t_1,\ldots, t_n\}$.  Then, we can rewrite the
+	system corresponding to \eqref{EqRhoC} as a matrix equation of the form
+	\begin{equation}
+		\label{EqRhoCMat}
+		\vec \rho_{C_i} = P_T \vec \rho_{C_i} + \vec p_{C_i},
+	\end{equation}
+	where 
+	\[
+		\vec \rho_{C_i} = \mat{\rho_{t_1C_i}\\ \rho_{t_2C_i}\\\vdots}
+		\qquad \vec p_{C_i} = \mat{P(t_1,C_i)\\P(t_2,C_i)\\\vdots}
+	\]
+	and $P_T$ is the matrix with $j,k$ entry $P(t_j,t_k)$.
+
+	Equation \eqref{EqRhoCMat} has a solution if and only if $(I-P_T)$ is invertible.  As it turns
+	out, it always is.
+
+	\begin{theorem}
+		If a Markov chain has a finite number of transient states and $P_T$ is the transition
+		matrix between transient states, then $(I-P_T)$ is invertible.
+	\end{theorem}
+	\begin{proof}
+		Showing that $(I-P_T)$ is invertible is equivalent to showing that 1 is not an
+		eigenvalue of $P_T$.
+
+		Suppose that 1 were an eigenvalue for $P_T$ and $\vec v$ a corresponding eigenvector.
+		Then
+		\[
+			\lim_{n\to\infty} P_T^n\vec v = \vec v.
+		\]
+		However, the $i,j$ entry of $P_T^n$ is the transition probability $P^n(t_i,t_j)$.
+		Since $t_j$ is transient, it is only hit a finite number of times and so
+		\[
+			\lim_{n\to\infty} P^n(i,j) = 0.
+		\]
+		Thus we have that 
+		\[
+			\lim_{n\to\infty} P_T^n\vec v = 0\vec v=\vec 0,
+		\]
+		which contradicts $\vec v$ being an eigenvector.
+	\end{proof}
+
 \end{document}
