@@ -58,7 +58,7 @@
 \renewcommand{\P}{\mathbb{P}}
 \newcommand{\ldsto}{\underset{\text{\tiny leads to}}{\leadsto}}
 
-\newcommand{\fatrule}[1]{\vspace{.3cm}\hrule {\hfill \sf #1}}
+\newcommand{\fatrule}[1]{\vspace{.3cm}\hrule {\hfill \sf #1}\par}
 
 %\tcbuselibrary{skins}
 %\usetikzlibrary{shadings}
@@ -793,6 +793,7 @@ Creative Commons By-Attribution Share-Alike\, \makebox(30,5){\includegraphics[he
 		\item[(iii)] Study irreducible Markov chains.
 	\end{enumerate}
 
+	\fatrule{Day 12}
 	For a moment, let's consider (ii).  Suppose $\{C_i\}$ is the collection of closed, irreducible subsets
 	of the state space.  Then, if $x\in C_i$,
 	\[
@@ -851,5 +852,108 @@ Creative Commons By-Attribution Share-Alike\, \makebox(30,5){\includegraphics[he
 		\]
 		which contradicts $\vec v$ being an eigenvector.
 	\end{proof}
+
+
+\subsection*{A Gambling Problem}
+
+	You're gambling. Every bet of one dollar that you make, you have a $p$ chance of winning
+	(and gaining a dollar) and a $1-p$ chance of losing your dollar.  You will stop if either: (a)
+	you won $\$25$ or (b) you lost $\$10$.
+
+	What is the probability that you will win vs\mbox{.} lose?
+
+	This question could be reformulated as: How do we compute the quantity
+	\[
+		\P_x(T_{x-10} < T_{x+25})?
+	\]
+	Instead of tackling this question directly, we'll analyze a more general process.
+
+\subsection*{Birth and Death Chains}
+	A birth and death chain is roughly inspired by the idea that whatever is alive
+	has some chance of breeding.  We model this as a Markov chain with state space $\N$
+	and transition probabilities
+	\[
+		P(x,y) = \begin{cases}
+			p_x &\text{ if }y=x+1\\
+			r_x &\text{ if }y=x\\
+			q_x &\text{ if }y=x-1\\
+			0 &\text{ otherwise }
+		\end{cases},
+	\]
+	where $p_x+r_x+q_x=1$ and may depend on $x$.  Further, to keep this chain in the sate space, $q_0=0$.
+
+	Now, for a fixed $a<b$, we can consider
+	\[
+		u_{ab}(x) = \P_x(T_a < T_b).
+	\]
+	We trivially define $u_{ab}(x) = 1$ if $x\leq a$ and $u_{ab}(x)=0$ if $x\geq b$.
+
+	Our goal is to compute $u_{ab}(x)$.  Since we have the one-step transition
+	probabilities, we may expand
+	\[
+		u_{ab}(x) = p_xu_{ab}(x+1)+r_xu_{ab}(x)+q_xu_{ab}(x-1),
+	\]
+	which is valid \emph{only when} $x\neq a$ and $x\neq b$.  Now, since $p_x+r_x+q_x=1$, 
+	we have $u_{ab}(x)  = (p_x+r_x+q_x)u_{ab}(x)$, and so after some rearranging of terms
+	we have
+	\[
+		u_{ab}(x+1)-u_{ab}(x) = \frac{q_x}{p_x}\Big(u_{ab}(x)-u_{ab}(x-1)\Big),
+	\]
+	which again is only valid if $x\neq a$ and $x\neq b$.  But, this is a recursive formula!
+	So, if $x>a$, we may substitute down to $x=a+1$ to get
+	\[
+		u_{ab}(x+1)-u_{ab}(x) = \frac{q_xq_{x-1}\cdots q_{a+1}}{p_xp_{x-1}\cdots p_{a+1}}\Big(u_{ab}(a+1)-u_{ab}(a)\Big).
+	\]
+	Let
+	\[
+		\gamma_x = \frac{q_xq_{x-1}\cdots q_{1}}{p_xp_{x-1}\cdots p_{1}}.
+	\]
+	We may now express $u_{ab}(x+1)-u_{ab}(x)$ as
+	\[
+		u_{ab}(x+1)-u_{ab}(x) = \frac{\gamma_x}{\gamma_a}\Big(u_{ab}(a+1)-u_{ab}(a)\Big).
+	\]
+	Notice that this formula, which was only valid for $x> a$ and $x\neq b$ is now trivially valid for $x=a$, 
+	and so it holds for all $a\leq x < b$.  And, for any such $x$, doing a telescoping sum, we see
+	\[
+		u_{ab}(x+1)-u_{ab}(a) = \sum_{y=a}^x \Big(u_{ab}(y+1)-u_{ab}(y)\Big) = \sum_{y=a}^x \frac{\gamma_y}{\gamma_a}\Big(u_{ab}(a+1)-u_{ab}(a)\Big).
+	\]
+
+	Since $u_{ab}(a)=1$, if we could somehow compute $\frac{u_{ab}(a+1)-u_{ab}(a)}{\gamma_a}$, we could compute $u_{ab}(x)$ for any $x$!
+
+	Notice the previous formula is valid for all $a\leq x<b$ and so letting $x=b-1$ we see,
+	\[
+		\sum_{y=a}^{b-1} \frac{\gamma_y}{\gamma_a}\Big(u_{ab}(a+1)-u_{ab}(a)\Big)
+		=u_{ab}(b)-u_{ab}(a) = 0-1=-1.
+	\]
+	Thus, 
+	\[
+		\frac{u_{ab}(a+1)-u_{ab}(a)}{\gamma_a} = \frac{-1}{\displaystyle \sum_{y=a}^{b-1} \gamma_y}.
+	\]
+	Putting everything together, we finally have a formula,
+	\[
+		u_{ab}(x) - u_{ab}(a) = \P_x(T_a<T_b)-1 = -\frac{\sum_{y=a}^{x-1} \gamma_y}{\sum_{y=a}^{b-1}\gamma_y},
+	\]
+	and so
+	\[
+		u_{ab}(x)  = 1-\frac{\sum_{y=a}^{x-1} \gamma_y}{\sum_{y=a}^{b-1}\gamma_y}.
+	\]
+
+
+	\vspace{.5cm}
+	We may now answer our gamblers problem.  The gamblers problem is equivalent to a birth and death 
+	process with $p_x=p$, $r_x=0$, and $q_x=1-p$.  We may then ask, what is
+	\[
+		\P_{10}(T_0 < T_{35}).
+	\]
+	Here $\gamma_y = (1-p)^y/p^y$.  Letting $\alpha = (1-p)/p$,
+	\[
+		\sum_{y=0}^{k} \gamma_y = \frac{\alpha^{k+1}-1}{\alpha-1}.
+	\]
+	This means,
+	\[
+		\P_{10}(T_0 < T_{35}) = 1-\frac{\frac{\alpha^{10}-1}{\alpha-1}}  {\frac{\alpha^{35}-1}{\alpha-1}} = 1-\frac{\alpha^{10}-1}{\alpha^{35}-1}.
+	\]
+
+
 
 \end{document}
