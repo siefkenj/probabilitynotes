@@ -828,6 +828,7 @@ Creative Commons By-Attribution Share-Alike\, \makebox(30,5){\includegraphics[he
 	Equation \eqref{EqRhoCMat} has a solution if and only if $(I-P_T)$ is invertible.  As it turns
 	out, it always is.
 
+	\fatrule{Day 13}
 	\begin{theorem}
 		If a Markov chain has a finite number of transient states and $P_T$ is the transition
 		matrix between transient states, then $(I-P_T)$ is invertible.
@@ -868,6 +869,7 @@ Creative Commons By-Attribution Share-Alike\, \makebox(30,5){\includegraphics[he
 	\]
 	Instead of tackling this question directly, we'll analyze a more general process.
 
+	\fatrule{Day 14}
 \subsection*{Birth and Death Chains}
 	A birth and death chain is roughly inspired by the idea that whatever is alive
 	has some chance of breeding.  We model this as a Markov chain with state space $\N$
@@ -925,6 +927,8 @@ Creative Commons By-Attribution Share-Alike\, \makebox(30,5){\includegraphics[he
 		\sum_{y=a}^{b-1} \frac{\gamma_y}{\gamma_a}\Big(u_{ab}(a+1)-u_{ab}(a)\Big)
 		=u_{ab}(b)-u_{ab}(a) = 0-1=-1.
 	\]
+
+	\fatrule{Day 15}
 	Thus, 
 	\[
 		\frac{u_{ab}(a+1)-u_{ab}(a)}{\gamma_a} = \frac{-1}{\displaystyle \sum_{y=a}^{b-1} \gamma_y}.
@@ -954,6 +958,172 @@ Creative Commons By-Attribution Share-Alike\, \makebox(30,5){\includegraphics[he
 		\P_{10}(T_0 < T_{35}) = 1-\frac{\frac{\alpha^{10}-1}{\alpha-1}}  {\frac{\alpha^{35}-1}{\alpha-1}} = 1-\frac{\alpha^{10}-1}{\alpha^{35}-1}.
 	\]
 
+\subsection*{Branching Chains and Ninjas}
 
+	Cultural preservation groups have been closely
+	watching ninja dojos in the mountains of Japan.
+	They've noticed that every dojo trains 3 warriors and
+	each warrior has a 1/2 chance of starting a new
+	dojo and a 1/2 chance of moving to the city and giving
+	up the ninja life.
+
+	Supposing it all started with one dojo, what are the chances
+	the ninja tradition eventually goes extinct?
+
+	Let $X_i$ be the number of dojos
+	at the $i$th stage.  The Markov chain $(X_i)$ is called
+	a \emph{branching chain} because every dojo has the possibility to
+	spawn new dojos (to branch).  There's also a possibility a dojo will
+	never produce new dojos, in which case the dojo's linear will go extinct.
+
+	To answer the extinction question, we'd like to compute $\rho_{10}$ for this Markov chain.
+	($0$ is an absorbing state for branching processes).  Since dojos act independently, we see
+	\[
+		\rho_{y0} = \rho_{10}^y.
+	\]
+	That is, the probability of $y$ dojos going extinct is the $y$-fold product of 
+	one dojo going extinct.
+
+	Directly computing, we get
+	\[
+		\rho_{10} = P(1,0)+\sum_{y> 0}P(1,y)\rho_{y0}.
+	\]
+	Let $f(y) = P(1,y)$ be the probability mass function for the one-step process starting in state $1$.
+	Now, using the convention that $a^0=1$ for all $a\in \R$, we may simply write
+	\begin{equation}
+		\label{EqMass}
+		\rho_{10} = \sum_{y\geq 0} P(1,y)\rho_{10}^y = \sum_{y\geq 0} f(y)\rho_{10}^y=\Phi(\rho_{10}),
+	\end{equation}
+	where $\Phi$ is the probability generating function for the one-step process.  What equation \eqref{EqMass}
+	says is that $\rho_{10}$, whatever it is, must be a fixed point of $\Phi$.
+
+	Let's compute some properties of $\Phi$.  First, note, $\Phi(1)=1$, so $\Phi$ always has at least one
+	fixed point.  Now,
+	\[
+		\Phi'(t) = \sum_{y\geq 1} yf(y) t^{y-1} \geq 0,
+	\]
+	so $\Phi$ is non-decreasing.  In fact, if $\mu=\sum_{y\geq 1} yf(y)$ is the expectation of the one-step
+	process and $\mu > 0$, then $\Phi'(t) > 0$ for $t>0$.  In particular, this means if $a<b$, then $\Phi(a)<\Phi(b)$.
+
+	Let's now unravel $\rho_{10}$.  From the definition of $\rho_{10}$,
+	\[
+		\rho_{10} = \lim_{n\to\infty} \P_1(T_0\leq n).
+	\]
+	Now,
+	\[
+		\P_1(T_0\leq n+1) = P(1,0) + \sum_{y > 0} P(1,y)\P_y(T_0 \leq n).
+	\]
+	But, again, $\P_y(T_0 \leq n) = \P_1(T_0\leq n)^y$ since every dojo independently trains people.  Thus
+	\[
+		\P_1(T_0\leq n+1) = \sum_{y \geq 0} P(1,y)\P_1(T_0 \leq n)^y=\Phi(\P_1(T_0\leq n)).
+	\]
+	Recursively applying this property,
+	\[
+		\P_1(T_0\leq k) = \Phi^{k+1}(\P_1(T_0\leq 0)) = \Phi^{k+1}(0),
+	\]
+	since $\P_1(T_0\leq 0)=0$.
+
+	Suppose that $f_0\in[0,1]$ is the smallest fixed point of $\Phi$.  That is, $\Phi(f_0) = f_0$ and $\Phi(x) > x$ for all $x\in[0,1]$
+	satisfying $x< f_0$.  Since $\Phi$ is non-decreasing, we trivially have the following string of inequalities,
+	\[
+		0  \leq f_0 
+	\]\[
+		0\leq \Phi(0)  \leq \Phi(f_0)=f_0 
+	\]\[
+		0\leq \Phi^2(0)  \leq \Phi^2(f_0)=f_0 
+	\]\[
+		\vdots
+	\]
+	Thus, $\lim_{n\to\infty} \Phi^n(0)=\alpha\leq f_0$.  But $\alpha\geq 0$ is a fixed point and so $\alpha=f_0$.  Thus,
+	\[
+		\lim_{n\to\infty} \P_1(T_0 \leq n) = \rho_{10} = f_0.
+	\]
+
+	What remains is to find the smallest fixed point of $\Phi$.
+
+	\begin{theorem}
+		Let $f$ be the probability mass function for a random variable $X$ with sate space $\N$, let $\mu$ be the
+		mean of $X$, and let
+		\[
+			\Phi(t)= \sum_{y\geq 0} f(y) t^y.
+		\]
+		Then, if $0<\mu \leq 1$ and $f(1)<1$, then $\Phi(t)=t$ and $t\in[0,1]$ implies $t=1$.
+
+		If $\mu > 1$, then $\Phi(t)=t$ where $t\in[0,1]$ has exactly two solutions, $t=1$ and
+		$t=t_0\in[0,1)$.
+	\end{theorem}
+
+	\begin{proof}
+		Notice that
+		\[
+			\mu = \sum_{y\geq 1} yf(y)
+		\]
+		and
+		\[
+			\Phi'(t) = \sum_{y\geq 1} yf(y) t^{y-1}.
+		\]
+		In particular, $\Phi'(1) =\mu$ and $\Phi'(t) \leq \mu$ for $t\in [0,1)$ with 
+			a strict inequality if $f(0),f(1)<1$.
+
+		Suppose $0<\mu\leq 1$ and $f(1) < 1$, and let $h(t) = \Phi(t)-t$.  It is clear that
+		$h(1)=0$, and our goal is to show this is the only zero.  By our computations above,
+		\[
+			h'(t) = \Phi'(t) - 1\leq \mu-1 \leq 0
+		\]
+		and so $h$ is non-increasing on $[0,1]$.  Since $\mu >0$, we deduce $f(0)<1$.  By assumption
+		we have $f(1) < 1$, and so in fact
+		\[
+			h'(t) < 0.
+		\]
+		for $t\in[0,1]$.  A strictly decreasing function on any interval can have at most one root,
+		and so $h(1)=1$ must be the only root.
+
+		Now suppose $\mu > 1$ and notice that in this case we must have $f(0)+f(1) < 1$ since
+		\[
+			\mu = \sum_{y\geq 1} yf(y) = 0f(0) +1f(1) + \sum_{y\geq 2} yf(y) > 1
+		\]
+		implies $f(y) > 0$ for at least one $y\geq 2$.
+
+		Now, as before, $h(1)=0$ is a root, and 
+		\[
+			h'(1) = \Phi'(1) - 1=\mu-1 > 0.
+		\]
+		Further, $h(0)=\Phi(0) = f(0)\geq 0$.  If $h$ starts above zero
+		and ends at zero with a positive slope, at some point $t\in[0,1)$,
+			$h(t)<0$ (you can formally
+			prove this with the mean value theorem).  
+			Therefore, by the intermediate value theorem, there is some $t_0\in[0,1)$
+				so that $h(t_0)=0$.
+
+		Finally we will show that $t_0$ is the unique zero in $[0,1)$.  Consider
+		\[
+			\Phi''(t) = \sum_{y\geq 2} y(y-1)f(y)t^{y-2} > 0
+		\]
+		for $t>0$ since $f(y)>0$ for at least one $y\geq 2$.  Therefore, $\Phi$ does not
+		change concavity on the interval $[0,1]$ and so $\Phi$ has at most two roots 
+		on $[0,1]$.  In particular, those roots must be $t_0$ and $1$.
+	\end{proof}
+
+	Now we can finally answer the dojo extinction question.  For the one-step process,
+	since each of the three trained ninjas have a 1/2 chance of starting a new dojo, 
+	the distribution of dojos will be
+	\[
+		f(0) = 1/8\qquad f(1)=3/8 \qquad f(2)=3/8 \qquad f(3) = 1/8.
+	\]
+	Thus, 
+	\[
+		\Phi(t) = \tfrac{1}{8} + \tfrac{3}{8}t + \tfrac{3}{8}t^2+\tfrac{1}{8}t^3.
+	\]
+	Letting $h(t) = \Phi(t)-t$ and noting that $h(t)=0$ if and only if $8h(t)=0$, 
+	we see
+	\[
+		8h(t) = 1+3t+3t^2+t^3-8t = (t-1)(t^2+4t-1)=0
+	\]
+	at $t=1$ and $t=-2\pm \sqrt{5}$.  We already know that $\rho_{10}$ must be the smallest 
+	zero of $h$ in $[0,1]$, so 
+	\[
+		\rho_{10} = -2+\sqrt{5} \approx 0.236.
+	\]
+	
 
 \end{document}
