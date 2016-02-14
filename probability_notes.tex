@@ -958,6 +958,7 @@ Creative Commons By-Attribution Share-Alike\, \makebox(30,5){\includegraphics[he
 		\P_{10}(T_0 < T_{35}) = 1-\frac{\frac{\alpha^{10}-1}{\alpha-1}}  {\frac{\alpha^{35}-1}{\alpha-1}} = 1-\frac{\alpha^{10}-1}{\alpha^{35}-1}.
 	\]
 
+	\fatrule{Day 16}
 \subsection*{Branching Chains and Ninjas}
 
 	Cultural preservation groups have been closely
@@ -1023,6 +1024,7 @@ Creative Commons By-Attribution Share-Alike\, \makebox(30,5){\includegraphics[he
 	\]
 	since $\P_1(T_0\leq 0)=0$.
 
+	\fatrule{Day 17}
 	Suppose that $f_0\in[0,1]$ is the smallest fixed point of $\Phi$.  That is, $\Phi(f_0) = f_0$ and $\Phi(x) > x$ for all $x\in[0,1]$
 	satisfying $x< f_0$.  Since $\Phi$ is non-decreasing, we trivially have the following string of inequalities,
 	\[
@@ -1104,6 +1106,7 @@ Creative Commons By-Attribution Share-Alike\, \makebox(30,5){\includegraphics[he
 		on $[0,1]$.  In particular, those roots must be $t_0$ and $1$.
 	\end{proof}
 
+	\fatrule{Day 18}
 	Now we can finally answer the dojo extinction question.  For the one-step process,
 	since each of the three trained ninjas have a 1/2 chance of starting a new dojo, 
 	the distribution of dojos will be
@@ -1124,6 +1127,101 @@ Creative Commons By-Attribution Share-Alike\, \makebox(30,5){\includegraphics[he
 	\[
 		\rho_{10} = -2+\sqrt{5} \approx 0.236.
 	\]
+
+\section*{Stationary Distributions}
+	
+	If $(X_i)$ is a sequence of independent and identically distributed random variables
+	with distribution $f$ and 
+	and $\mu = \text{mean}(f)$, the law of large numbers tells us that
+	\[
+		\lim_{k\to\infty} \frac{1}{k} \sum_{i<k} X_i = \mu.
+	\]
+	In fact, we can deduce that
+	\[
+		\lim_{k\to\infty} \frac{1}{k} \#\{i<k:X_i=y\} = f(y).
+	\]
+	In other words, we can recover the distribution $f$ from the \emph{statistics}
+	of a sequence of i.i.d. ``copies'' of a random variable (in this case the ``copies''
+	are the $X_i$).
+
+	Markov chains are not independent (most of the time), but we could still collect statistics.
+	For a Markov chain $(X_i)$, let
+	\[
+		N_k(y) = \#\{i<k:X_i=y\}
+	\]
+	be the number of times the chain hits $y$ in at most $k$ steps.
+
+	Now, we could define a function
+	\[
+		f(y) := \lim_{k\to\infty} \frac{1}{k} N_k(y)
+	\]
+	whenever the limit exists.  Surprisingly, this limit exists for Markov chains, but this isn't obvious
+	and we'll just accept this for now.  The question we're interested in is whether $f$ depends on $X_0$.
+
+	We can come up with examples that go both ways.
+	\begin{enumerate}
+		\item Consider a Markov chain with transition matrix $\mat{1&0\\0&1}$.  Then
+			\[
+				f(y) = \begin{cases}
+					1 &\text{ if } y=X_0\\
+					0 & \text{ else}
+				\end{cases}.
+			\]
+			Since this Markov chain remains in its initial state, $f$ clearly depends on
+			the initial state.
+		\item Consider a Markov chain with transition matrix $\mat{1/2&1/2\\1/2&1/2}$.  Then
+			this Markov chain is actually independent and
+			\[
+				f(y)=1/2
+			\]
+			regardless of $y$.
+		\item Consider a Markov chain with transition matrix $M=\mat{1/2&1/2\\1/4 & 3/4}$.  In
+			this case we can diagonalize 
+			\[
+				M=\mat{-2&1\\1&1} \mat{1/4&0\\0&1}\mat{-1/3&1/3\\1/3&2/3}
+			\]
+			and use this to compute
+			\[
+				\lim_{k\to\infty} M^k = \mat{1/3&2/3\\1/3&2/3}.
+			\]
+			It takes some careful analysis to unpack the statement about $\lim_{k\to\infty} M^k$
+			and turn it into a statement about the statistics of our Markov chain,
+			but, it turns out the straightforward thing happens.  That is,
+			\[
+				f(y)=\begin{cases}
+					1/3&\text{ if }y=0\\
+					2/3&\text{ if }y=1
+				\end{cases}.
+			\]
+	\end{enumerate}
+
+	\begin{definition}[Stationary Distribution]
+		Let $(X_i)$ be a Markov chain with transition function $P$ and state space $\mathcal S$.  The distribution $\pi$
+		is called a \emph{stationary distribution} if
+		\[
+			\pi(y) = \sum_{x\in\mathcal S} \pi(x)P(x,y).
+		\]
+	\end{definition}
+
+	A stationary distribution is a distribution that equals its own \emph{push forward} distribution.
+	That is, $\text{dist}(X_i\mid X_{i-1}\sim \pi) = \pi$ where $X_{i-1}\sim \pi$ means that $X_{i-1}$
+	has probability distribution $\pi$.
+
+	If $\mathcal S$ is finite, we can phrase this in terms of the transition matrix.  Let $T$ be the transition 
+	matrix for a Markov chain.  Then if $\vec \pi$ is a distribution represented as a probability vector,
+	$\vec\pi$ would be stationary if and only if
+	\[
+		\vec \pi = \vec \pi T.
+	\]
+	In other words, $\vec \pi$ would be a left eigenvector of $T$ with eigenvalue $1$.  Since $T$ always has
+	an eigenvalue of $1$, we know there is always at least one stationary distribution for any Markov chain.
+	If the eigenvector with eigenvalue $1$ is unique (up to scalar multiples), we know that this
+	stationary distribution cannot depend on the distribution of $X_0$.  Since we'll
+	see that the statics of a Markov chain will always converge to an invariant
+	distribution, this means if there is only one invariant distribution, the statistics won't
+	depend on the initial state of the Markov chain.
+	statistics of the Markov chain would be in
+
 	
 
 \end{document}
