@@ -55,6 +55,7 @@
 \newcommand{\mat}[1]{\begin{bmatrix}#1\end{bmatrix}}
 \newcommand{\chr}{\mathrm{char}}
 \renewcommand{\d}{\mathrm{d}}
+\newcommand{\1}{\mathbf{1}}
 \renewcommand{\P}{\mathbb{P}}
 \newcommand{\ldsto}{\underset{\text{\tiny leads to}}{\leadsto}}
 
@@ -636,7 +637,7 @@ Creative Commons By-Attribution Share-Alike\, \makebox(30,5){\includegraphics[he
 		
 		Consider a chain $C\in C_w^n(x)\cap C_0^n(y)$.  Since the chain is Markov, we know
 		$\P(\cdots\to x\to s\to\ldots) = \P(\cdots\to x)\P(x\to s)\P(s\to\ldots)$.  
-		Since there are no occurrences of $y$, $\P(x\to s) = 1-P(x,y)$. Since there are $w$ occurences
+		Since there are no occurrences of $y$, $\P(x\to s) = 1-P(x,y)$. Since there are $w$ occurrences
 		of $x$ in $C$, $\P_x(C) \leq (1-P(x,y))^k$.
 
 		We are now ready to compute
@@ -1158,6 +1159,7 @@ Creative Commons By-Attribution Share-Alike\, \makebox(30,5){\includegraphics[he
 	whenever the limit exists.  Surprisingly, this limit exists for Markov chains, but this isn't obvious
 	and we'll just accept this for now.  The question we're interested in is whether $f$ depends on $X_0$.
 
+	\fatrule{Day 19}
 	We can come up with examples that go both ways.
 	\begin{enumerate}
 		\item Consider a Markov chain with transition matrix $\mat{1&0\\0&1}$.  Then
@@ -1203,6 +1205,7 @@ Creative Commons By-Attribution Share-Alike\, \makebox(30,5){\includegraphics[he
 		\]
 	\end{definition}
 
+	\fatrule{Day 20}
 	A stationary distribution is a distribution that equals its own \emph{push forward} distribution.
 	That is, $\text{dist}(X_i\mid X_{i-1}\sim \pi) = \pi$ where $X_{i-1}\sim \pi$ means that $X_{i-1}$
 	has probability distribution $\pi$.
@@ -1304,5 +1307,170 @@ Creative Commons By-Attribution Share-Alike\, \makebox(30,5){\includegraphics[he
 		\sum_{y\geq 1} \frac{p_yp_{y-1}\cdots p_0}{q_{y+1}q_{y}\cdots q_1} < \infty.
 	\]
 	
+	\fatrule{Day 21}
+
+	\subsection*{Mean Waiting Time}
+
+	One of our goals will to be to show that if 
+		$f(y) := \lim_{k\to\infty} \frac{1}{k} N_k(y)$ is a distribution, then it is
+		a stationary distribution.  And, though it may seem intuitive, actually
+		showing this will take some machinery.  Here, we'll establish that machinery,
+		piggybacking on the \emph{strong law of large numbers}.
+
+	\begin{theorem}[Strong Law of Large Numbers]
+		Let $X_i$ be an independent and identically distributed sequence of random
+		variables and let $\mu\in\R\cup\{\pm\infty\}$.  Then
+		\[
+			\lim_{n\to\infty} \frac{X_1+\cdots +X_n}{n} = \mu
+		\]
+		with probability $1$.
+	\end{theorem}
+
+	The strong law of large numbers is fairly technical to prove, so we will
+	just use it as a black box for now.
+
+	\begin{definition}[Indicator Function]
+		For an event $X$, the \emph{indicator function} of $X$ is 
+		\[
+			\1_{X}(\omega) = \begin{cases}
+				1&\text{ if }\omega\in X\\
+				0&\text{ else}
+			\end{cases}.
+		\]
+	\end{definition}
+
+	Indicator functions can be used to create random variables whose expectations
+	are probabilities.  That is, if $X$ is an event,
+	\[
+		\P(X) = \E(\1_{X}).
+	\]
+
+	\begin{definition}[Mean Waiting Time]
+		For a Markov chain $(X_i)$, the \emph{mean waiting time} for the state $y$ is
+		\[
+			m_y=\E(T_y) = \E(\min\{i>0: X_i=y\mid X_0=y\}).
+		\]
+	\end{definition}
+
+	Recall that
+	\[
+		N_k(y) = \#\{i< k:X_i=y\},
+	\]
+	and define
+	\[
+		G_k(x,y) = \E(N_k(y)\mid X_0=x).
+	\]
+
+	Finally, let $\{T_y<\infty\}$ be the event that $y$ occurs.  With this
+	last bit of notation we can formally state a seemingly-intuitive relationship
+	between $N_k(y)$ and $m_y$.
+
+	\begin{theorem}
+		Let $(X_i)$ be a Markov chain and $y$ be a recurrent state.
+		Then
+		\[
+			\lim_{k\to\infty} \frac{N_k(y)}{n} = \frac{\1_{\{T_y<\infty\}}}{m_y}
+		\]
+		with probability $1$ and
+		\[
+			\lim_{k\to\infty} \frac{G_k(x,y)}{n} = \frac{\rho_{xy}}{m_y}.
+		\]
+	\end{theorem}
+
+	We need the $\1_{\{T_y<\infty\}}$ to cover the cases where state $y$ is never reached,
+	but if we condition on starting in state $y$, this theorem would say
+	\[
+		\lim_{k\to\infty} \frac{(N_k(y)\mid X_0=y)}{n} = \frac{1}{m_y}.
+	\]
+	In other words, 
+	\[
+		\lim_{k\to\infty} \frac{n}{(N_k(y)\mid X_0=y)} = m_y,
+	\]
+	and so if we take a large number of steps and divide by the number of times we encounter $y$,
+	we get the expected amount of time we need to wait for $y$.  This is sounding a
+	lot like the law of large numbers!
+
+	\begin{proof}
+		Notice that we can define
+		\[
+			\N_k(y) = \sum_{i<k} \1_{\{X_i=y\}}.
+		\]
+		If the $\1_{\{X_i=y\}}$ were independent, we could apply the law of large numbers to
+		$\frac{1}{k}\sum_{i<k} \1_{\{X_i=y\}}$ and we'd be set.  Unfortunately,
+		we're not so lucky.  But, we'll search for something that is independent.
+
+		Let
+		\[
+			T^r_y = \min\{i>0: N_i(y)=r\mid X_0=y\}
+		\]
+		be the time until $y$ is hit $r$ times, and define
+		\[
+			W^i_y = T^i_y-T^{i-1}_y
+		\]
+		to be the time between the $(i-1)$st and $i$th occurrences of $y$.
+		By the Markov property, 
+		\[
+			\E(W_y^i) = \E(W_y^j) = \E(T_y) = m_y
+		\]
+		and the $W_y^i$ are independent and identically distributed.  Thus, by the strong
+		law of large numbers,
+		\[
+			\lim_{k\to\infty} \frac{W_y^1+\cdots W_y^k}{k} = m_y
+		\]
+		with probability $1$.  Now, $W_y^1+\cdots W_y^k=T_y^k$ and
+		\[
+			(N_{T_y^k}(y)\mid X_0=y) = k.
+		\]
+		So, we may write the previous limit as
+		\[
+			\lim_{k\to\infty} \frac{W_y^1+\cdots W_y^k}{k} = 
+			\lim_{k\to\infty} \frac{T_y^k}{(N_{T_y^k}(y)\mid X_0=y)} = 
+			m_y
+		\]
+		Since $T_y^k$ is monotone
+		increasing in $k$ and $T_k^k\to\infty$ as $k\to\infty$, we know
+		\[
+			\lim_{k\to\infty} \frac{k}{(N_{k}(y)\mid X_0=y)} = 
+			m_y.
+		\]
+
+		Inverting we have
+		\[
+			\lim_{k\to\infty} \frac{(N_{k}(y)\mid X_0=y)}{k} = 
+			\frac{1}{m_y}.
+		\]
+
+		Now, notice that 
+		\[
+			(N_{k}(y)\mid X_0=y) -n \leq (N_{k}(y)\mid X_0=y\text{ or }X_1=y\text{ or \ldots\ or } X_{n-1}=y) \leq (N_{k}(y)\mid X_0=y).
+		\]
+		For any fixed $n$, $n/k\to0$ as $k\to\infty$, and so
+		\[
+			\lim_{k\to\infty} \frac{(N_{k}(y)\mid X_0=y\text{ or }X_1=y\text{ or \ldots\ or } X_{n-1}=y)}{k} = 
+			\frac{1}{m_y},
+		\]
+		but the event $\{T_y<\infty\}$ precisely
+		corresponds to the existence of an $n<\infty$ so that $X_n=y$. And, if $T_y=\infty$, $N_k(y)=0$ for all $k$.
+		Thus, we conclude
+		\[
+			\lim_{k\to\infty} \frac{N_{k}(y)}{k} = 
+			\frac{\1_{\{T_y<\infty\}}}{m_y}
+		\]
+		with probability $1$.  Now, since $\E(\1_{\{T_y<\infty\}}\mid X_0=x)=\rho_{xy}$, taking expectations
+		of both sides (and using the bounded convergence theorem),
+		\[
+			\E_x\left(\lim_{k\to\infty} \frac{N_{k}(y)}{k}\right)
+			=\lim_{k\to\infty} \frac{\E_x(N_{k}(y))}{k}
+			=\lim_{k\to\infty} \frac{G_k(x,y)}{k}
+			=\frac{\E_x(\1_{\{T_y<\infty\}})}{m_y} = \frac{\rho_{xy}}{m_y}.
+		\]
+	\end{proof}
+
+	To complement this theorem, if $y$ is transient, we know that with probability $1$, $\lim_{k\to\infty} N_k(y) <\infty$,
+	and so
+	\[
+		\lim_{k\to\infty} \frac{N_{k}(y)}{k} = 
+		0.
+	\]
 
 \end{document}
