@@ -1425,12 +1425,21 @@ Creative Commons By-Attribution Share-Alike\, \makebox(30,5){\includegraphics[he
 		\[
 			\lim_{k\to\infty} \frac{W_y^1+\cdots W_y^k}{k} = 
 			\lim_{k\to\infty} \frac{T_y^k}{(N_{T_y^k}(y)\mid X_0=y)} = 
-			m_y
+			m_y.
 		\]
-		Since $T_y^k$ is monotone
-		increasing in $k$ and $T_k^k\to\infty$ as $k\to\infty$, we know
+		Now, for $r$ such that $T_y^k\leq r <T_y^{k+1}$, by definition we have
 		\[
-			\lim_{k\to\infty} \frac{k}{(N_{k}(y)\mid X_0=y)} = 
+			\frac{T_y^k}{(N_{T_y^k}(y)\mid X_0=y)}
+			\leq \frac{r}{(N_r(y)\mid X_0=y)}
+			< \frac{T_y^{k+1}}{(N_{T_y^{k+1}}(y)\mid X_0=y)-1}.
+		\]
+
+
+		Since $T_y^k$ is monotone
+		increasing in $k$ and $T_y^k\to\infty$ as $k\to\infty$ and because
+		both the left and right sides of the above inequality converge to $m_y$, we deduce
+		\[
+			\lim_{r\to\infty} \frac{r}{(N_{r}(y)\mid X_0=y)} = 
 			m_y.
 		\]
 
@@ -1472,5 +1481,87 @@ Creative Commons By-Attribution Share-Alike\, \makebox(30,5){\includegraphics[he
 		\lim_{k\to\infty} \frac{N_{k}(y)}{k} = 
 		0.
 	\]
+
+	\subsection*{Positive and Null Recurrent}
+
+	Not all recurrent states are created equally.  Some, although you return with
+	probability one, it may take an exceedingly long time to return.  In fact, 
+	the mean return time to a recurrent state may be infinite!
+
+	\begin{definition}[Positive \& Null Recurrent]
+		A recurrent state $y$ is called \emph{positive recurrent} if
+		$m_y<\infty$.  Otherwise $y$ is called \emph{null recurrent}.
+	\end{definition}
+
+	Some examples.
+
+	\begin{enumerate}
+		\item Consider a two state Markov chain whose transition matrix is $\mat{0&1\\1&0}$.  
+			Here $P(0,1)=1$ and $P(1,0)=1$ and so both states are recurrent
+			with $m_0=m_1=2$.  Therefore, both states are positive recurrent.
+		\item Let $R_i$ be a ring of length $i$ with starting state $r_i$ and ending state
+			$e$.  That is, from $r_i$, you transition to the next state with probability
+			$1$ and to the next, next state with probability $1$ until you reach state $e$.
+
+			Now, consider the Markov chain with state space $\bigcup R_{2^i}$ and transition
+			probabilities $P(e,r_{2^i}) = 1/2^i$.  Since every ring leads back to $e$, $e$
+			is clearly a recurrent state.  However, if you ever travel to ring $R_t$, you
+			must wait $t$ steps before returning to state $e$.  Therefore, 
+			\[
+				m_e= \E(T_e) = \sum 2^i \P(e,r_{2^i}) = \sum 1 = \infty,
+			\]
+			so the mean return time to $e$ is infinite.
+	\end{enumerate}
+
+	We now have an analog of a previous theorem.
+
+	\begin{theorem}
+		If $y$ is positive recurrent and $y\ldsto x$, then $x$ is positive recurrent.
+	\end{theorem}
+
+	\begin{proof}
+		We're going to leverage the previous theorem to make this theorem easier.  As such,
+		we need to better understand $G_n(x,y)$.
+
+		Rewriting the definition of $G_n(x,y)$ with indicator functions gives
+		us some insight.
+		\[
+			G_n(x,y) = \E_x(N_n(y)) = \E_x\left(\sum_{i<n} \1_{X_i=y}\right) = \sum_{i<n} \E_x(\1_{X_i=y})
+		\]
+		\[
+			=\sum_{i<n} \P_x(X_i=y) = \sum_{i<n} P^i(x,y).
+		\]
+
+		Now, since $y\ldsto x$ implies $x\ldsto y$, there are $a,b>0$ so that $P^a(x,y),P^b(y,x)>0$.
+		This means that for $k>a+b$, 
+		\[
+			P^k(x,x) \geq P^a(x,y)P^{k-a-b}(y,y)P^b(y,x).
+		\]
+
+		Using the alternate formulation for $G_n$ we see
+		\[
+			G_n(x,x) = \sum_{i<n} P^n(x,x) \geq \sum_{a+b\leq i<n} P^n(x,x)
+		\]\[
+			\geq \sum_{a+b\leq i<n}P^a(x,y)P^{k-a-b}(y,y)P^b(y,x)
+		\]
+		\[
+			=P^a(x,y)P^b(y,x) \sum_{i<n-a-b} P^{i}(y,y)
+			=P^a(x,y)P^b(y,x) G_{n-a-b}(y,y).
+		\]
+
+		Now, for any constant $k$, 
+		\[
+			\lim_{n\to\infty} \frac{G_n(y,y)}{n}=\lim_{n\to\infty} \frac{G_{n-k}(y,y)}{n} = \frac{1}{m_y}.
+		\]
+		$y$ is positive recurrent, so $m_y<\infty$ by definition.  Now, since $\rho_{xx}=1$,
+		\[
+			\frac{1}{m_x} = \lim_{n\to\infty} \frac{G_n(x,x)}{n} \geq 
+			P^a(x,y)P^b(y,x) \lim_{n\to\infty}\frac{G_{n-a-b}(y,y)}{n} = \frac{P^a(x,y)P^b(y,x)}{m_y}>0.
+		\]
+		Thus, $m_x<\infty$ and so $m_x$ is positive recurrent.
+	\end{proof}
+
+
+
 
 \end{document}
