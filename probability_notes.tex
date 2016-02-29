@@ -1561,6 +1561,95 @@ Creative Commons By-Attribution Share-Alike\, \makebox(30,5){\includegraphics[he
 		Thus, $m_x<\infty$ and so $m_x$ is positive recurrent.
 	\end{proof}
 
+	\begin{theorem}
+		If $C$ is a closed, irreducible, finite set of states then every state in $C$ is positive recurrent.
+	\end{theorem}
+	\begin{proof}
+		Suppose every state in $C$ is null recurrent.  For the remainder of this proof, we will
+		assume $X_0\in C$.
+
+		Since the state $y\in C$ is null recurrent, $m_y=\infty$ and so
+		$\lim_{k\to\infty} \frac{N_k(y)}{k}=\frac{1}{m_y}=0$.  Thus, for some $K_y$, 
+		\[
+			\frac{N_{K_y}(y)}{K_y} < \frac{1}{2|C|}.
+		\]
+		Since $C$ is finite, let $K=\max\{K_y:y\in C\}$.  Now,
+		\[
+			\sum_{y\in C} \frac{N_K(y)}{K} < \frac{1}{2|C|}|C|=\frac{1}{2} < 1,
+		\]
+		but this is a contradiction since $\sum_{y\in C} \frac{N_K(y)}{K}=1$.
+	\end{proof}
+
+	Now we know that for a finite-state Markov chain, each state is either transient or positive recurrent.
+
+	We're on our way towards connecting statistics with stationary distributions.  In particular, for 
+	an irreducible Markov chain,
+	\[
+		\pi(y) = \frac{1}{m_y}
+	\]
+	will turn out to be a stationary distribution.
+
+	To that end, we need the next small piece.
+
+	\begin{theorem}
+		Suppose $\pi$ is a stationary distribution.  Then $\pi(x)=0$ whenever $x$ is a 
+		transient or null recurrent state.
+	\end{theorem}
+	\begin{proof}
+		If $\pi$ is stationary, then
+		\[
+			\pi(y) = \sum_{x\in\mathcal S} \pi(x)P(x,y)=\sum_{x\in\mathcal S} \pi(x)P^k(x,y)
+		\]
+		for all $k$.  So,
+		\[
+			\pi(y) = \frac{1}{\ell}\sum_{1\leq k\leq \ell} \sum_{x\in\mathcal S} \pi(x)P^k(x,y)
+			=\sum_{x\in\mathcal S} \sum_{1\leq k\leq \ell} \frac{\pi(x)P^k(x,y)}{\ell}
+		\]\[
+			=\sum_{x\in\mathcal S} \pi(x)\frac{G_\ell(x,y)}{\ell}.
+		\]
+		Now, by the \emph{bounded convergence theorem}
+		\[
+			\lim_{\ell\to\infty} \sum_{x\in\mathcal S} \pi(x)\frac{G_\ell(x,y)}{\ell}
+			=
+			\sum_{x\in\mathcal S} \pi(x)\lim_{\ell\to\infty} \frac{G_\ell(x,y)}{\ell}
+			=\sum_{x\in\mathcal S} \frac{\pi(x)}{m_y}.
+		\]
+		Now, if $y$ is transient or null recurrent, $m_y=\infty$, and so the above sum is $0$ showing
+		$\pi(y)=0$.
+	\end{proof}
+
+	Now for the big theorem.  The proof is quite technical so we will only
+	go through half of it.
+	\begin{theorem}
+		An irreducible, positive-recurrent Markov chain (i.e., every state is positive recurrent)
+		has a unique stationary distribution $\pi$ given by
+		\[
+			\pi(y) = \frac{1}{m_y}.
+		\]
+	\end{theorem}
+	\begin{proof}
+		From the last theorem, we know that if $pi$ is a function so that $0\leq \pi(x)\leq 1$ and
+		\[
+			\pi(y) = \sum_{x\in\mathcal S} \pi(x)P(x,y),
+		\]
+		then
+		\[
+			\pi(y) = \sum_{x\in\mathcal S} \pi(x)\lim_{n\to\infty}\frac{G_n(x,y)}{n}
+			=
+			\pi(y) = \sum_{x\in\mathcal S} \frac{\pi(x)}{m_y}.
+		\]
+		Now, if $\pi$ is a distribution $\sum_{x\in\mathcal S} \pi(x)=1$ and so
+		\[
+			\pi(y) = \sum_{x\in\mathcal S} \frac{\pi(x)}{m_y} = \frac{1}{m_y}.
+		\]
+
+		Thus, if $\pi$ is a stationary distribution, it must satisfy $\pi(y)=\frac{1}{m_y}$ and
+		is therefore unique.
+
+		What remains to be shown is that $\pi(y)=\frac{1}{m_y}$ is a distribution (i.e., it sums to one)
+		and that it is stationary.  This argument is rather technical, but it can be found in your textbook.
+	\end{proof}
+
 
 
 
