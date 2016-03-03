@@ -1628,7 +1628,7 @@ Creative Commons By-Attribution Share-Alike\, \makebox(30,5){\includegraphics[he
 		\]
 	\end{theorem}
 	\begin{proof}
-		From the last theorem, we know that if $pi$ is a function so that $0\leq \pi(x)\leq 1$ and
+		From the last theorem, we know that if $\pi$ is a function so that $0\leq \pi(x)\leq 1$ and
 		\[
 			\pi(y) = \sum_{x\in\mathcal S} \pi(x)P(x,y),
 		\]
@@ -1650,7 +1650,149 @@ Creative Commons By-Attribution Share-Alike\, \makebox(30,5){\includegraphics[he
 		and that it is stationary.  This argument is rather technical, but it can be found in your textbook.
 	\end{proof}
 
+	\begin{corollary}
+		An irreducible Markov chain is positive recurrent if and only if it has a stationary distribution.
+	\end{corollary}
 
+	\begin{proof}
+		Suppose $X_n$ is an irreducible Markov chain that is positive recurrent.  Then by the previous theorem,
+		it has a unique stationary distribution $\pi(y)=\frac{1}{m_y}$.
 
+		Now suppose $X_n$ is irreducible and has a stationary distribution $\pi$.  If every state is null
+		recurrent then
+		\[
+			\sum_{y\in\mathcal S} \pi(y) = \sum 0 = 0,
+		\]
+		which contradicts $\pi$ being a distribution.  Thus, there is at least one positive recurrent state,
+		and since the chain is irreducible, this means all states are positive recurrent.
+	\end{proof}
+
+	The previous theorem also allows us to link statistics to stationary distributions.
+	\begin{corollary}
+		If $X_n$ is an irreducible Markov chain with stationary distribution $\pi$, then
+		\[
+			\lim_{n\to\infty} \frac{N_n(y)}{n} = \pi(y)
+		\]
+		with probability $1$.
+	\end{corollary}
+
+	\subsection*{Decomposition of State Space}
+
+	Before we proved that we can decompose the state space of a Markov chain into
+	disjoint irreducible closed sets and remaining transient states.  We know
+	that any stationary distribution must be zero on null-recurrent or transient states.
+	Using this fact, we can study the space of all stationary distributions by studying
+	stationary distributions on irreducible closed positive-recurrent subsets.
+
+	\begin{definition}[Concentrated/Supported]
+		A distribution $\pi$ is said to be \emph{concentrated} or \emph{supported} on the
+		set $C$ if $\pi(y)=0$ for $y\notin C$.  The \emph{support} of a distribution
+		$\pi$ is the set $\{x:\pi(x)>0\}$.
+	\end{definition}
+
+	\begin{theorem}
+		If $C$ is a closed irreducible positive-recurrent set of states, there is a unique
+		stationary distribution concentrated on $C$.
+	\end{theorem}
+
+	The proof of this theorem is nearly identical to that of the previous, so we will omit it.
+
+	Notice now that we can completely describe every stationary distribution!  Let $X_n$ be a Markov
+	chain with state space $\mathcal S$.  Let $\{C_1,C_2,\ldots\}$ be the closed irreducible
+	positive-recurrent sets of states and let $\pi_i$ be the unique stationary distribution
+	concentrated on $C_i$.  
+
+	Now, if $(\alpha_i)$ is a sequence so that $\alpha_i\in[0,1]$ and $\sum \alpha_i=1$, we have that
+	\[
+		\pi = \sum \alpha_i\pi_i
+	\]
+	is another stationary distribution.  Now, since the support of each $\pi_i$ is disjoint,
+	the marginal (conditional) distribution of $\pi$ given that $X_0\in C_i$ must be $\pi_i$.
+
+	Formally, 
+	\[
+	(\pi\mid X_0\in C_i)= \begin{cases}\frac{\pi(y)}{\alpha_i}&\text{ if }y\in C_i\\0&\text{ else}\end{cases}
+		=\pi_i.
+	\]
+
+	Analogously, if $\pi'$ is any stationary distribution on $\mathcal S$, then $\pi_i'=(\pi'\mid X_0\in C_i)$
+	must be a stationary distribution concentrated on $C_i$.  Since such distributions are unique, $\pi_i'=\pi_i$.
+	This holds for every $i$ and so
+	\[
+		\pi' = \sum \alpha_i'\pi_i
+	\]
+	for some sequence $\alpha_i'$.  Thus, we really have described all stationary distributions.
+
+	\subsection*{Periodicity}
+
+	Consider the Markov chain $X_i$ with transition matrix $\mat{0&1\\1&0}$ and the Markov
+	chain $Y_i$ with transition matrix $\mat{1/2&1/2\\1/2&1/2}$.  They both have a unique stationary
+	distribution $\pi$ given by $\pi(y)=1/2$.  However, there's something fundamentally different about them.
+
+	For $X_i$, if we keep statistics, we see that half the time we are in each state.  However $P^n(0,0)$
+	is not $1/2$.  It alternates between $0$ and $1$.
+
+	For $Y_i$, if we keep statistics, we are in each state half the time, and $P^n(0,0)=1/2=P^n(0,1)=P^n(1,0)=P^n(1,1)$
+	for all $n\geq 1$.  Our final mission will be to classify when $P^n(x,y)$ converges to $\pi(y)$.
+
+	\begin{definition}[Period]
+		For a state $x$ in a Markov chain, let $R_x=\{i>0: P^i(x,x)>0\}$.  The
+		\emph{period} of $x$ is the greatest common divisor of the numbers in $R_x$.
+
+		The state $x$ is called \emph{aperiodic} if the period of $x$ is one.  An
+		irreducible Markov chain
+		is called \emph{aperiodic} or \emph{regular} if every state is aperiodic.
+	\end{definition}
+
+	We now see that $X_i$ is periodic with each state having period $2$ and $Y_i$ is aperiodic.
+	This turns out to be exactly the condition we're looking for.
+
+	\begin{theorem}
+		If $X_i$ is an irreducible positive recurrent aperiodic Markov chain and $\pi$ is its
+		unique stationary distribution, then
+		\[
+			\lim_{n\to\infty} P^n(x,y)=\pi(y)
+		\]
+		regardless of $x$.
+	\end{theorem}
+
+	We won't prove this theorem in its full generality, but we will prove it for finite state space.
+
+	\begin{proof}
+		Suppose $X_i$ is an irreducible aperiodic Markov chain with finite state space $\mathcal S$.  Automatically,
+		$X_i$ must be positive recurrent and so we can find a unique stationary distribution $\pi$.
+		
+		Let $T$ be the transition matrix for this Markov chain and let $\vec \pi$ be the left-eigenvector
+		of $T$ corresponding to $\pi$.
+
+		Now, since $T$ is aperiodic, there is some number $n$ so that $T^n$ is a regular matrix (all
+		entries are positive).  (This follows from the fact that if two numbers $a$ and $b$
+		have greatest common divisor equal to one, for any large enough $n$, you may write $n=ka+k'b$
+		for some $k,k'\in \Z$.  Thus $P^n(x,x)\geq P^{ka}(x,x)P^{k'b}(x,x)$.  If we chose $a,b\in R_x$,
+		then $P^{ka}(x,x)P^{k'b}(x,x) >0$ and so $P^n(x,x)>0$.  Repeat this for every $x$ and take the
+		maximum $n$.)
+
+		Let $e_1,\ldots, e_i$ be the standard basis vectors for $\R^n$. A \emph{convex
+		combination} of vectors is a linear combination of vectors where each coefficient is
+		in $[0,1]$ and where all the coefficients sum to $1$.  The \emph{unit simplex} $\mathcal U$
+		is the set of all convex combinations of standard basis vectors.
+
+		Now, since $T^n$ is a stochastic matrix, it maps the unit simplex into the unit simplex.  Since
+		$T^n$ contains strictly positive entries, it must map the unit simplex strictly inside the unit
+		simplex.  Not only that, but there can be no points on the boundary of $\mathcal UT^n$ that coincide
+		with the boundary of $\mathcal U$.  Thus $T^n$ is a strict contraction, and so $T^n$ has a unique
+		positive eigenvector with eigenvalue $1$.
+
+		We already knew that.  The unique eigenvector is $\vec \pi$.
+		But, now we also know that if $\vec v$ is a probability vector
+		\[
+			\lim_{k\to\infty} (T^n)^k\vec v = \vec \pi.
+		\]
+		Finally, if $A$ is any stochastic matrix, $AT^n$ is strictly positive.  Thus
+		\[
+			\lim_{k\to\infty} T^k\vec v = \vec \pi,
+		\]
+		which was the desired result.
+	\end{proof}
 
 \end{document}
